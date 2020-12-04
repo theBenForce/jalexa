@@ -16,7 +16,7 @@ interface AlexaSkillParameters {
 }
 
 interface SpeakOptions {
-  newConversation?: string;
+  newConversation?: boolean;
 }
 
 export class AlexaSkill {
