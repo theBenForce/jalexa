@@ -1,0 +1,22 @@
+{
+  "name": "jalexa",
+  "version": "1.0.0",
+  "description": "Easily test alexa skills.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Ben Force <benforce@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:theBenForce/jalexa.git"
+  },
+  "dependencies": {
+    "ask-cli": "^2.20.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.2"
+  },
+  "scripts": {
+    "build": "tsc"
+  }
+}
