@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export enum RequestTypes {
   LaunchRequest = "LaunchRequest",
   CanFulfillIntentRequest = "CanFulfillIntentRequest",
@@ -30,6 +31,21 @@ interface CanFulfillIntentRequest extends BasicRequest<RequestTypes.CanFulfillIn
 
 type ConfirmationStatus = "NONE" | "CONFIRMED" | "DENIED";
 
+interface AuthorityResolution {
+  authority: string;
+  status: {
+    code: "ER_SUCCESS_MATCH" | "ER_SUCCESS_NO_MATCH" | "ER_ERROR_TIMEOUT" | "ER_ERROR_EXCEPTION";
+  };
+  values: [
+    {
+      value: {
+        name: string;
+        id: string;
+      };
+    }
+  ];
+};
+
 interface IntentRequest extends BasicRequest<RequestTypes.IntentRequest>  {
   dialogState: "STARTED" | "IN_PROGRESS" | "COMPLETED";
   intent: {
@@ -41,22 +57,7 @@ interface IntentRequest extends BasicRequest<RequestTypes.IntentRequest>  {
         value: string;
         confirmationStatus: ConfirmationStatus;
         resolutions: {
-          resolutionsPerAuthority: [
-            {
-              authority: string;
-              status: {
-                code: "ER_SUCCESS_MATCH" | "ER_SUCCESS_NO_MATCH" | "ER_ERROR_TIMEOUT" | "ER_ERROR_EXCEPTION";
-              };
-              values: [
-                {
-                  value: {
-                    name: string;
-                    id: string;
-                  };
-                }
-              ];
-            }
-          ];
+          resolutionsPerAuthority: Array<AuthorityResolution>;
         };
       };
     };
@@ -147,26 +148,7 @@ export interface SimulationResponse {
               value: string;
               confirmationStatus: string;
               resolutions: {
-                resolutionsPerAuthority: [
-                  {
-                    authority: string;
-                    status: {
-                      code:
-                        | "ER_SUCCESS_MATCH"
-                        | "ER_SUCCESS_NO_MATCH"
-                        | "ER_ERROR_TIMEOUT"
-                        | "ER_ERROR_EXCEPTION";
-                    };
-                    values: [
-                      {
-                        value: {
-                          name: string;
-                          id: string;
-                        };
-                      }
-                    ];
-                  }
-                ];
+                resolutionsPerAuthority: Array<AuthorityResolution>;
               };
             };
           };
