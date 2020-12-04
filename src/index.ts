@@ -1,6 +1,6 @@
 import SkillSimulationController from "ask-cli/lib/controllers/skill-simulation-controller";
 import AppConfig from "ask-cli/lib/model/app-config";
-import { SimulationResponse } from "./responses";
+import { SimulationResponse, InSkillProductSummary } from "./responses";
 
 export * from "./matchers";
 export * from "./responses";
@@ -26,6 +26,10 @@ export class AlexaSkill {
   constructor(private params: AlexaSkillParameters) {
     new AppConfig();
 
+    this.params.locale = this.params.locale ?? "en-US";
+    this.params.stage = this.params.stage ?? "development";
+    this.params.askProfile = this.params.askProfile ?? "default";
+
     this.controller = new SkillSimulationController({
       skillId: params.skillId,
       profile: params.askProfile ?? "default",
@@ -49,9 +53,9 @@ export class AlexaSkill {
 
   private _getResponse(conversationId: string): Promise<SimulationResponse> {
     return new Promise((resolve, reject) =>
-    this.controller.getSkillSimulationResult(conversationId, (err: unknown, res: {body: SimulationResponse}) => {
+    this.controller.getSkillSimulationResult(conversationId, (err, res) => {
       if (err) {
-        reject(err);
+        reject(err.body);
         return;
       }
       resolve(res.body);
@@ -62,5 +66,30 @@ export class AlexaSkill {
   async speak(input: string, options: SpeakOptions = {}): Promise<SimulationResponse> {
     const conversation = await this._startSimulation(input, Boolean(options.newConversation) || !Boolean(this.conversationId));
     return this._getResponse(conversation.id);
+  }
+
+  async resetIspEntitlement(referenceName: string): Promise<void> {
+    const products: Array<InSkillProductSummary> = await new Promise((resolve, reject) => this.controller.smapiClient.isp.listIspForSkill(this.params.skillId, this.params.stage!, {}, (err, response) => {
+      if(err) {
+        reject(err.body);
+        return;
+      }
+      resolve(response.body.inSkillProductSummaryList);
+    }));
+
+    const product = products.find((product) => product.referenceName === referenceName);
+
+    if(!product) {
+      throw new Error(`Could not find product ${referenceName}`);
+    }
+
+    return new Promise((resolve, reject) => this.controller.smapiClient.isp.resetIspEntitlement(product.productId, this.params.stage!, (err, response) => {
+      if(err) {
+        reject(err.body);
+        return;
+      }
+      resolve(response);
+    }));
+
   }
 }

@@ -3,7 +3,37 @@ export enum RequestTypes {
   LaunchRequest = "LaunchRequest",
   CanFulfillIntentRequest = "CanFulfillIntentRequest",
   IntentRequest = "IntentRequest",
-  SessionEndedRequest = "SessionEndedRequest"
+  SessionEndedRequest = "SessionEndedRequest",
+}
+
+export enum ProductTypes {
+  Subscription = "SUBSCRIPTION",
+  Entitlement = "ENTITLEMENT",
+  Consumable = "CONSUMABLE",
+}
+
+export interface InSkillProductSummary {
+  editableState: "EDITABLE";
+  lastUpdated: string;
+  nameByLocale: Record<string, string>;
+  pricing: Record<
+    string,
+    {
+      defaultPriceListing: {
+        currency: string;
+        price: number;
+        primeMemberPrice: number;
+      };
+      releaseDate: string;
+    }
+  >;
+  productId: string;
+  promotableState: string;
+  purchasableState: string;
+  referenceName: string;
+  stage: "live" | "development";
+  status: string;
+  type: ProductTypes;
 }
 
 interface BasicRequest<T extends RequestTypes> {
@@ -13,10 +43,10 @@ interface BasicRequest<T extends RequestTypes> {
   locale: string;
 }
 
-interface LaunchRequest extends BasicRequest<RequestTypes.LaunchRequest> {
-}
+interface LaunchRequest extends BasicRequest<RequestTypes.LaunchRequest> {}
 
-interface CanFulfillIntentRequest extends BasicRequest<RequestTypes.CanFulfillIntentRequest> {
+interface CanFulfillIntentRequest
+  extends BasicRequest<RequestTypes.CanFulfillIntentRequest> {
   intent: {
     name: string;
     slots: Record<
@@ -34,7 +64,11 @@ type ConfirmationStatus = "NONE" | "CONFIRMED" | "DENIED";
 interface AuthorityResolution {
   authority: string;
   status: {
-    code: "ER_SUCCESS_MATCH" | "ER_SUCCESS_NO_MATCH" | "ER_ERROR_TIMEOUT" | "ER_ERROR_EXCEPTION";
+    code:
+      | "ER_SUCCESS_MATCH"
+      | "ER_SUCCESS_NO_MATCH"
+      | "ER_ERROR_TIMEOUT"
+      | "ER_ERROR_EXCEPTION";
   };
   values: [
     {
@@ -44,9 +78,9 @@ interface AuthorityResolution {
       };
     }
   ];
-};
+}
 
-interface IntentRequest extends BasicRequest<RequestTypes.IntentRequest>  {
+interface IntentRequest extends BasicRequest<RequestTypes.IntentRequest> {
   dialogState: "STARTED" | "IN_PROGRESS" | "COMPLETED";
   intent: {
     name: string;
@@ -64,49 +98,58 @@ interface IntentRequest extends BasicRequest<RequestTypes.IntentRequest>  {
   };
 }
 
-interface SessionEndedRequest extends BasicRequest<RequestTypes.SessionEndedRequest> {
-  "reason": "USER_INITIATED" | "ERROR" | "EXCEEDED_MAX_REPROMPTS";
-  "error": {
-    "type": "INVALID_RESPONSE" | "DEVICE_COMMUNICATION_ERROR" | "INTERNAL_SERVICE_ERROR" | "ENDPOINT_TIMEOUT";
-    "message": string;
+interface SessionEndedRequest
+  extends BasicRequest<RequestTypes.SessionEndedRequest> {
+  reason: "USER_INITIATED" | "ERROR" | "EXCEEDED_MAX_REPROMPTS";
+  error: {
+    type:
+      | "INVALID_RESPONSE"
+      | "DEVICE_COMMUNICATION_ERROR"
+      | "INTERNAL_SERVICE_ERROR"
+      | "ENDPOINT_TIMEOUT";
+    message: string;
   };
 }
 
 interface User {
-  "userId": string;
-  "permissions": {
-    "consentToken"?: string;
+  userId: string;
+  permissions: {
+    consentToken?: string;
   };
 }
 
 interface ResponseBody {
-  "version": string;
-  "session": {
-    "new": true,
-    "sessionId": string;
-    "application": {
-      "applicationId": string;
+  version: string;
+  session: {
+    new: true;
+    sessionId: string;
+    application: {
+      applicationId: string;
     };
-    "user": User;
+    user: User;
   };
-  "context": {
-    "Extensions"?: {
-      "available": Record<string, any>;
+  context: {
+    Extensions?: {
+      available: Record<string, any>;
     };
-    "System": {
-      "application": {
-        "applicationId": string;
+    System: {
+      application: {
+        applicationId: string;
       };
-      "user": User;
-      "device": {
-        "deviceId": string;
-        "supportedInterfaces": Record<string, any>;
-      },
-      "apiEndpoint": string;
-      "apiAccessToken": string;
-    }
-  },
-  "request": LaunchRequest | CanFulfillIntentRequest | IntentRequest | SessionEndedRequest;
+      user: User;
+      device: {
+        deviceId: string;
+        supportedInterfaces: Record<string, any>;
+      };
+      apiEndpoint: string;
+      apiAccessToken: string;
+    };
+  };
+  request:
+    | LaunchRequest
+    | CanFulfillIntentRequest
+    | IntentRequest
+    | SessionEndedRequest;
 }
 
 export interface SimulationResponse {
