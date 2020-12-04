@@ -6,35 +6,8 @@ export enum RequestTypes {
   SessionEndedRequest = "SessionEndedRequest",
 }
 
-export enum ProductTypes {
-  Subscription = "SUBSCRIPTION",
-  Entitlement = "ENTITLEMENT",
-  Consumable = "CONSUMABLE",
-}
 
-export interface InSkillProductSummary {
-  editableState: "EDITABLE";
-  lastUpdated: string;
-  nameByLocale: Record<string, string>;
-  pricing: Record<
-    string,
-    {
-      defaultPriceListing: {
-        currency: string;
-        price: number;
-        primeMemberPrice: number;
-      };
-      releaseDate: string;
-    }
-  >;
-  productId: string;
-  promotableState: string;
-  purchasableState: string;
-  referenceName: string;
-  stage: "live" | "development";
-  status: string;
-  type: ProductTypes;
-}
+
 
 interface BasicRequest<T extends RequestTypes> {
   type: T;

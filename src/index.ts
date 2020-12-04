@@ -1,6 +1,6 @@
 import SkillSimulationController from "ask-cli/lib/controllers/skill-simulation-controller";
 import AppConfig from "ask-cli/lib/model/app-config";
-import { SimulationResponse, InSkillProductSummary } from "./responses";
+import { SimulationResponse } from "./responses";
 
 export * from "./matchers";
 export * from "./responses";
@@ -88,7 +88,7 @@ export class AlexaSkill {
         reject(err.body);
         return;
       }
-      resolve(response);
+      resolve();
     }));
 
   }
