@@ -2,8 +2,8 @@
 
 Easily create unit tests for alexa skills.
 
-![npm](https://img.shields.io/npm/v/jalexa)
-![Release](https://github.com/theBenForce/jalexa/workflows/Release/badge.svg)
+[![npm](https://img.shields.io/npm/v/jalexa)](https://www.npmjs.com/package/jalexa)
+[![Release](https://github.com/theBenForce/jalexa/workflows/Release/badge.svg)](https://github.com/theBenForce/jalexa/actions?query=workflow%3ARelease)
 
 ## Installation
 
