@@ -17,7 +17,7 @@ yarn add -D jalexa
 
 Then add it to your setup files in `jest.config.js`:
 
-```json
+```js
 module.exports = {
   setupFilesAfterEnv: ["jalexa/dist/matchers"],
   ...
