@@ -49,7 +49,10 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "files": [],
+  "files": [
+    "dist/*",
+    "dist/**/*"
+  ],
   "release": {
     "branches": [
       "main"
