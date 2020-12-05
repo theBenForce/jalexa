@@ -1,6 +1,7 @@
 import SkillSimulationController from "ask-cli/lib/controllers/skill-simulation-controller";
 import AppConfig from "ask-cli/lib/model/app-config";
 import { SimulationResponse } from "./responses";
+import { AlexaSimulationResult } from "./result";
 
 export * from "./matchers";
 export * from "./responses";
@@ -19,7 +20,7 @@ interface SpeakOptions {
   newConversation?: boolean;
 }
 
-export class AlexaSkill {
+export class AlexaSkill<T = Record<string, any>> {
   private conversationId?: string;
   private controller: SkillSimulationController;
 
@@ -63,9 +64,11 @@ export class AlexaSkill {
   );
   }
 
-  async speak(input: string, options: SpeakOptions = {}): Promise<SimulationResponse> {
+  async speak(input: string, options: SpeakOptions = {}): Promise<AlexaSimulationResult<T>> {
     const conversation = await this._startSimulation(input, Boolean(options.newConversation) || !Boolean(this.conversationId));
-    return this._getResponse(conversation.id);
+    const response = await this._getResponse(conversation.id);
+
+    return new AlexaSimulationResult<T>(response);
   }
 
   async resetIspEntitlement(referenceName: string): Promise<void> {

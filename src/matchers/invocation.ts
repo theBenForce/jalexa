@@ -1,7 +1,8 @@
-import { RequestTypes, SimulationResponse } from "../responses";
+import { RequestTypes } from "../responses";
+import { AlexaSimulationResult } from "../result";
 
-export function toUseEndpoint(received: SimulationResponse, expected: string) {
-  const usedEndpoint = received.result?.skillExecutionInfo?.invocations[0].invocationRequest.endpoint;
+export function toUseEndpoint(received: AlexaSimulationResult, expected: string) {
+  const usedEndpoint = received.endpoint;
   return usedEndpoint === expected ?
     {
       pass: true,
@@ -14,8 +15,8 @@ export function toUseEndpoint(received: SimulationResponse, expected: string) {
 }
 
 
-export function toBeFasterThan(received: SimulationResponse, expected: number) {
-  const responseTime = received.result?.skillExecutionInfo?.invocations[0].metrics.skillExecutionTimeInMilliseconds ?? Infinity;
+export function toBeFasterThan(received: AlexaSimulationResult, expected: number) {
+  const responseTime = received.metrics?.skillExecutionTimeInMilliseconds ?? Infinity;
 
   return responseTime <= expected ?
     {
@@ -28,8 +29,8 @@ export function toBeFasterThan(received: SimulationResponse, expected: number) {
     };
 }
 
-export function toHaveConsideredIntent(received: SimulationResponse, expected: string) {
-  const consideredIntents = received.result?.alexaExecutionInfo?.consideredIntents.map(intent => intent.name) ?? [];
+export function toHaveConsideredIntent(received: AlexaSimulationResult, expected: string) {
+  const consideredIntents = received.alexaExecution?.consideredIntents.map(intent => intent.name) ?? [];
 
   return consideredIntents.find((intent) => intent === expected) ?
     {
@@ -42,8 +43,8 @@ export function toHaveConsideredIntent(received: SimulationResponse, expected: s
 }
 
 
-export function toBeRequestType(received: SimulationResponse, expected: RequestTypes) {
-  const requestType = received.result?.skillExecutionInfo?.invocations?.[0]?.invocationRequest?.body?.request.type
+export function toBeRequestType(received: AlexaSimulationResult, expected: RequestTypes) {
+  const requestType = received.requestBody?.request.type;
 
   return requestType === expected ?
   {

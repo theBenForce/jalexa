@@ -6,9 +6,6 @@ export enum RequestTypes {
   SessionEndedRequest = "SessionEndedRequest",
 }
 
-
-
-
 interface BasicRequest<T extends RequestTypes> {
   type: T;
   requestId: string;
@@ -16,7 +13,16 @@ interface BasicRequest<T extends RequestTypes> {
   locale: string;
 }
 
+export function isLaunchRequest(request: BasicRequest<RequestTypes>): request is LaunchRequest {
+  return request.type === RequestTypes.LaunchRequest;
+}
+
 interface LaunchRequest extends BasicRequest<RequestTypes.LaunchRequest> {}
+
+
+export function isCanFulfillIntentRequest(request: BasicRequest<RequestTypes>): request is CanFulfillIntentRequest {
+  return request.type === RequestTypes.CanFulfillIntentRequest;
+}
 
 interface CanFulfillIntentRequest
   extends BasicRequest<RequestTypes.CanFulfillIntentRequest> {
@@ -53,22 +59,29 @@ interface AuthorityResolution {
   ];
 }
 
+export function isIntentRequest(request: BasicRequest<RequestTypes>): request is IntentRequest {
+  return request.type === RequestTypes.IntentRequest;
+}
+
 interface IntentRequest extends BasicRequest<RequestTypes.IntentRequest> {
   dialogState: "STARTED" | "IN_PROGRESS" | "COMPLETED";
   intent: {
     name: string;
     confirmationStatus: ConfirmationStatus;
-    slots: {
-      SlotName: {
+    slots: Record<string, {
         name: string;
         value: string;
         confirmationStatus: ConfirmationStatus;
         resolutions: {
           resolutionsPerAuthority: Array<AuthorityResolution>;
         };
-      };
-    };
+      }>;
   };
+}
+
+
+export function isSessionEndedRequest(request: BasicRequest<RequestTypes>): request is SessionEndedRequest {
+  return request.type === RequestTypes.SessionEndedRequest;
 }
 
 interface SessionEndedRequest
@@ -91,10 +104,10 @@ interface User {
   };
 }
 
-interface ResponseBody {
+export interface RequestBody {
   version: string;
   session: {
-    new: true;
+    new: boolean;
     sessionId: string;
     application: {
       applicationId: string;
@@ -125,52 +138,91 @@ interface ResponseBody {
     | SessionEndedRequest;
 }
 
+export interface OutputSpeech {
+  type: "PlainText" | "SSML";
+  text?: string;
+  ssml?: string;
+  playBehavior?: "REPLACE_ENQUEUED" | "ENQUEUE" | "REPLACE_ALL";
+}
+
+export interface ResponseBody {
+  version: string;
+  sessionAttributes?: Record<string, any>;
+  response: {
+    outputSpeech?: OutputSpeech;
+    card?: {
+      type: "Standard" | "Simple" | "LinkAccount" | "AskForPermissionsConsent";
+      title?: string;
+      content?: string;
+      text?: string;
+      image?: {
+        smallImageUrl: string;
+        largeImageUrl: string;
+      };
+    };
+    reprompt?: {
+      outputSpeech: OutputSpeech;
+    };
+    directives?: [
+      {
+        type: string;
+        [key: string]: any;
+      }
+    ];
+    shouldEndSession?: boolean;
+  };
+}
+
+export interface ExecutionMetrics {
+skillExecutionTimeInMilliseconds: number;
+}
+
+export interface Invocation {
+  invocationRequest: {
+    endpoint: string;
+    body: RequestBody;
+  };
+  invocationResponse: {
+    body: ResponseBody;
+  };
+  metrics: ExecutionMetrics;
+}
+
+export interface AlexaResponse {
+  type: "Speech";
+  content: {
+    caption: string;
+  };
+}
+
+export interface ConsideredIntent {
+  name: string;
+  confirmationStatus: "NONE" | "CONFIRMED" | "DENIED";
+  slots: {
+    SlotName: {
+      name: string;
+      value: string;
+      confirmationStatus: string;
+      resolutions: {
+        resolutionsPerAuthority: Array<AuthorityResolution>;
+      };
+    };
+  };
+}
+
+export interface AlexaExecutionInfo {
+  alexaResponses: Array<AlexaResponse>;
+  consideredIntents: Array<ConsideredIntent>;
+}
+
 export interface SimulationResponse {
   id: string;
   status: "IN_PROGRESS" | "SUCCESSFUL" | "FAILED";
-  result?: {
-    skillExecutionInfo?: {
-      invocations: [
-        {
-          invocationRequest: {
-            endpoint: string;
-            body: ResponseBody;
-          };
-          invocationResponse: {
-            body: object;
-          };
-          metrics: {
-            skillExecutionTimeInMilliseconds: number;
-          };
-        }
-      ];
+  result: {
+    skillExecutionInfo: {
+      invocations: Array<Invocation>;
     };
-    alexaExecutionInfo?: {
-      alexaResponses: [
-        {
-          type: "Speech";
-          content: {
-            caption: string;
-          };
-        }
-      ];
-      consideredIntents: [
-        {
-          name: string;
-          confirmationStatus: "NONE" | "CONFIRMED" | "DENIED";
-          slots: {
-            SlotName: {
-              name: string;
-              value: string;
-              confirmationStatus: string;
-              resolutions: {
-                resolutionsPerAuthority: Array<AuthorityResolution>;
-              };
-            };
-          };
-        }
-      ];
-    };
+    alexaExecutionInfo: AlexaExecutionInfo;
     error?: {
       message: string;
     };

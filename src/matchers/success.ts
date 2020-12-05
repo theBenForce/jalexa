@@ -1,7 +1,8 @@
-import { SimulationResponse } from "../responses";
+
+import { AlexaSimulationResult } from "../result";
 
 
-export function toBeSuccessful(received: SimulationResponse) {
+export function toBeSuccessful(received: AlexaSimulationResult) {
   return received.status === "SUCCESSFUL" ? {
     pass: true,
     message: () => `Expected ${received.status} not to be "SUCCESSFUL`

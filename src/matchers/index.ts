@@ -1,6 +1,7 @@
 import * as success from "./success";
 import * as invocation from "./invocation";
 import { RequestTypes } from "../responses";
+import * as responseMatchers from "./responses";
 
 declare global {
   namespace jest {
@@ -30,11 +31,24 @@ declare global {
        * @param expected Expected type of request
        */
       toBeRequestType(expected: RequestTypes): R;
+
+      /**
+       * Test to see if `shouldEndSession` was set to true.
+       */
+      toEndSession(): R;
+
+      /**
+       * Verifies that the desired slot is present in the intent request
+       * @param slotName Name of the slot that should be present
+       * @param value Expected value of the slot, will do a case insensitive comparison
+       */
+      toHaveSlot(slotName: string, value?: string): R;
     }
   }
 }
 
 expect.extend({
   ...success,
-  ...invocation
+  ...invocation,
+  ...responseMatchers
 });
