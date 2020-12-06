@@ -1,7 +1,5 @@
 import {
   isIntentRequest,
-  RequestTypes,
-  SimulationResponse,
 } from "../responses";
 import { AlexaSimulationResult } from "../result";
 

@@ -163,14 +163,14 @@ export interface ResponseBody {
     reprompt?: {
       outputSpeech: OutputSpeech;
     };
-    directives?: [
-      {
-        type: string;
-        [key: string]: any;
-      }
-    ];
+    directives?: Array<Directive>;
     shouldEndSession?: boolean;
   };
+}
+
+export interface Directive {
+  type: string;
+  [key: string]: any;
 }
 
 export interface ExecutionMetrics {

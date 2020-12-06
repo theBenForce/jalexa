@@ -2,6 +2,7 @@ import * as success from "./success";
 import * as invocation from "./invocation";
 import { RequestTypes } from "../responses";
 import * as responseMatchers from "./responses";
+import * as directives from "./directives";
 
 declare global {
   namespace jest {
@@ -43,6 +44,23 @@ declare global {
        * @param value Expected value of the slot, will do a case insensitive comparison
        */
       toHaveSlot(slotName: string, value?: string): R;
+
+      /**
+       * Verifies that the given directive is present in the response 
+       * @param directiveType Name of directive type that should be present
+       */
+      toHaveDirective(directiveType: string): R;
+
+      /**
+       * Verifies the response contains a request to buy a product.
+       */
+      toHaveBuyRequest(productId?: string): R;
+
+      /** Verifies the response contains a request to upsell a product */
+      toHaveUpsellRequest(productId?: string): R;
+
+      /** Verifies the response contains a request to refund a product */
+      toHaveRefundRequest(productId?: string): R;
     }
   }
 }
@@ -50,5 +68,6 @@ declare global {
 expect.extend({
   ...success,
   ...invocation,
-  ...responseMatchers
+  ...responseMatchers,
+  ...directives
 });
