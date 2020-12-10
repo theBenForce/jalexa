@@ -1,7 +1,0 @@
-src/
-node_modules/
-.github/
-.prettierrc
-.eslintrc.json
-tsconfig.json
-*.log
