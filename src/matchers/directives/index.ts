@@ -4,7 +4,7 @@ export function toHaveDirective(
   received: AlexaSimulationResult,
   directiveType: string
 ) {
-  const directives = received.responseBody.response.directives ?? [];
+  const directives = received.responseBody?.response.directives ?? [];
 
   return directives.find((directive) => directive.type === directiveType)
     ? {
@@ -28,7 +28,7 @@ function connectionCheck(
   name: string,
   productId?: string
 ) {
-  const directives = received.responseBody.response.directives ?? [];
+  const directives = received.responseBody?.response.directives ?? [];
   const directive = directives.find(
     (directive) =>
       directive.type === "Connections.SendRequest" && directive.name === name

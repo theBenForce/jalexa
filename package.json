@@ -13,26 +13,28 @@
     "url": "git@github.com:theBenForce/jalexa.git"
   },
   "dependencies": {
-    "ask-cli": "^2.20.0"
+    "ask-cli": "^2.22.4",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/commit-analyzer": "^8.0.1",
-    "@semantic-release/github": "^7.2.0",
-    "@semantic-release/npm": "^7.0.9",
-    "@semantic-release/release-notes-generator": "^9.0.1",
-    "@tsconfig/node12": "^1.0.7",
-    "@types/jest": "^26.0.16",
-    "@types/node": "^14.14.10",
-    "@typescript-eslint/eslint-plugin": "^4.9.0",
-    "@typescript-eslint/parser": "^4.9.0",
-    "commitizen": "^4.2.2",
+    "@semantic-release/github": "^7.2.3",
+    "@semantic-release/npm": "^7.1.3",
+    "@semantic-release/release-notes-generator": "^9.0.3",
+    "@tsconfig/node14": "^1.0.1",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^16.3.3",
+    "@types/uuid": "^8.3.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
+    "commitizen": "^4.2.4",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^7.14.0",
-    "jest": "^26.6.3",
-    "prettier": "^2.2.1",
-    "semantic-release": "^17.3.0",
-    "typescript": "^4.1.2"
+    "eslint": "^7.31.0",
+    "jest": "^27.0.6",
+    "prettier": "^2.3.2",
+    "semantic-release": "^17.4.4",
+    "typescript": "^4.3.5"
   },
   "scripts": {
     "build": "tsc",

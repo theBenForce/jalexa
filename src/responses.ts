@@ -182,7 +182,7 @@ export interface Invocation {
     endpoint: string;
     body: RequestBody;
   };
-  invocationResponse: {
+  invocationResponse?: {
     body: ResponseBody;
   };
   metrics: ExecutionMetrics;
@@ -215,9 +215,11 @@ export interface AlexaExecutionInfo {
   consideredIntents: Array<ConsideredIntent>;
 }
 
+export type SkillResponseStatus = "IN_PROGRESS" | "SUCCESSFUL" | "FAILED";
+
 export interface SimulationResponse {
   id: string;
-  status: "IN_PROGRESS" | "SUCCESSFUL" | "FAILED";
+  status: SkillResponseStatus;
   result: {
     skillExecutionInfo: {
       invocations: Array<Invocation>;
@@ -226,6 +228,14 @@ export interface SimulationResponse {
     error?: {
       message: string;
     };
+  };
+}
+
+export interface DirectInvocationResponse {
+  status: SkillResponseStatus;
+  result: {
+    error?: { message: string };
+    skillExecutionInfo: Invocation;
   };
 }
 

@@ -1,10 +1,10 @@
 import {
   isIntentRequest,
 } from "../responses";
-import { AlexaSimulationResult } from "../result";
+import { AlexaSimulationResult, BaseResult } from "../result";
 
 export function toEndSession(received: AlexaSimulationResult) {
-  const endSession = received.responseBody.response.shouldEndSession;
+  const endSession = received.responseBody?.response.shouldEndSession;
 
   return endSession === true
     ? {
@@ -14,6 +14,20 @@ export function toEndSession(received: AlexaSimulationResult) {
     : {
         pass: false,
         message: () => `Expected shouldEndSession to be true`,
+      };
+}
+
+export function toHaveError(received: BaseResult) {
+  const error = received.error;
+
+  return Boolean(error) === true
+    ? {
+        pass: true,
+        message: () => `Expected error not to be "${error}"`,
+      }
+    : {
+        pass: false,
+        message: () => `Expected error to be present`,
       };
 }
 

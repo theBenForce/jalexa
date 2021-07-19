@@ -35,7 +35,8 @@ interface InSkillProductSummary {
 }
 
 declare module "ask-cli/lib/clients/smapi-client" {
-  
+  type SkillStage = "live" | "development";
+  type EndpointRegion = "DEFAULT" | "NA" | "EU" | "FE";
 
   declare class SmapiClient {
     isp: {
@@ -60,16 +61,27 @@ declare module "ask-cli/lib/clients/smapi-client" {
         callback: CallbackFunction
       ): void;
     };
+    skill: {
+      test: {
+        invokeSkill(
+          skillId: string,
+          stage: SkillStage,
+          invokePayload: any,
+          endpointRegion: EndpointRegion,
+          callback: CallbackFunction
+        );
+      };
+    };
   }
 }
 
 declare module "ask-cli/lib/controllers/skill-simulation-controller" {
-  import { SmapiClient } from "ask-cli/lib/clients/smapi-client";
+  import { SmapiClient, SkillStage } from "ask-cli/lib/clients/smapi-client";
 
   interface SkillSimulationControllerParameters {
     skillId: string;
     locale: string;
-    stage: "live" | "development";
+    stage: SkillStage;
     profile: string;
     saveSkillIo?: string;
     debug?: boolean;
@@ -89,6 +101,7 @@ declare module "ask-cli/lib/controllers/skill-simulation-controller" {
       simulationId: string,
       callback: CallbackFunction<ErrorResponse, SimulationResponse>
     );
+    clearSession();
   }
 
   export default SkillSimulationController;

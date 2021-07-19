@@ -39,6 +39,11 @@ declare global {
       toEndSession(): R;
 
       /**
+       * Test to see if an error message is included in the response
+       */
+      toHaveError(): R;
+
+      /**
        * Verifies that the desired slot is present in the intent request
        * @param slotName Name of the slot that should be present
        * @param value Expected value of the slot, will do a case insensitive comparison
@@ -46,7 +51,7 @@ declare global {
       toHaveSlot(slotName: string, value?: string): R;
 
       /**
-       * Verifies that the given directive is present in the response 
+       * Verifies that the given directive is present in the response
        * @param directiveType Name of directive type that should be present
        */
       toHaveDirective(directiveType: string): R;
