@@ -4,6 +4,14 @@
     "rootDir": "src",
     "outDir": "dist",
     "esModuleInterop": true,
-    "declaration": true
-  }
+    "declaration": true,
+    "typeRoots": [
+      "./src/@types",
+      "./node_modules/@types"
+    ]
+  },
+  "include": [
+    "./src/**/*",
+    "./src/@types"
+  ],
 }

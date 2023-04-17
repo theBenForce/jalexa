@@ -32,7 +32,7 @@ export function toHaveError(received: BaseResult) {
 }
 
 export function toHaveSpeech(received: AlexaSimulationResult, ...text: string[]) {
-  const speech = received.responseBody?.response.outputSpeech.ssml;
+  const speech = received.responseBody?.response.outputSpeech?.ssml;
 
   return text.some((t) => speech?.includes(t))
     ? {

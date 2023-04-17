@@ -1,7 +1,9 @@
+
 import SkillSimulationController from "ask-cli/dist/lib/controllers/skill-simulation-controller";
+import {InSkillProductSummary} from "ask-cli/dist/lib/clients/smapi-client";
 import AppConfig from "ask-cli/dist/lib/model/app-config";
 import { EndpointRegion } from "ask-cli/dist/lib/clients/smapi-client";
-import "./ASKTypes";
+import "./@types/ASKTypes";
 import * as requests from "./requests";
 import { DirectInvocationResponse, SimulationResponse } from "./responses";
 import { AlexaInvocationResult, AlexaSimulationResult } from "./result";
