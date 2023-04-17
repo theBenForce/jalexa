@@ -1,11 +1,12 @@
 
+
 import SkillSimulationController from "ask-cli/dist/lib/controllers/skill-simulation-controller";
 import {InSkillProductSummary} from "ask-cli/dist/lib/clients/smapi-client";
 import AppConfig from "ask-cli/dist/lib/model/app-config";
 import { EndpointRegion } from "ask-cli/dist/lib/clients/smapi-client";
 import "./@types/ASKTypes";
 import * as requests from "./requests";
-import { DirectInvocationResponse, SimulationResponse } from "./responses";
+import { DirectInvocationResponse, ErrorResponse, SimulationResponse } from "./responses";
 import { AlexaInvocationResult, AlexaSimulationResult } from "./result";
 
 export * from "./matchers";
@@ -82,7 +83,7 @@ export class AlexaSkill<T = Record<string, any>> {
 
   private _getResponse(conversationId: string): Promise<SimulationResponse> {
     return new Promise((resolve, reject) =>
-      this.controller.getSkillSimulationResult(conversationId, (err, res) => {
+      this.controller.getSkillSimulationResult<ErrorResponse, SimulationResponse>(conversationId, (err, res) => {
         if (err) {
           reject(err.body);
           return;
