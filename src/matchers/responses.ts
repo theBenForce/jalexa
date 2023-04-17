@@ -31,6 +31,20 @@ export function toHaveError(received: BaseResult) {
       };
 }
 
+export function toHaveSpeech(received: AlexaSimulationResult, ...text: string[]) {
+  const speech = received.responseBody?.response.outputSpeech.ssml;
+
+  return text.some((t) => speech?.includes(t))
+    ? {
+        pass: true,
+        message: () => `Expected speech not to include "${text.join(", ")}"`,
+      }
+    : {
+        pass: false,
+        message: () => `Expected speech to include "${text.join(", ")}", recieved "${speech}"`,
+      };
+}
+
 export function toHaveSlot(
   received: AlexaSimulationResult,
   slotName: string,
