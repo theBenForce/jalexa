@@ -1,14 +1,13 @@
-import SkillSimulationController from "ask-cli/lib/controllers/skill-simulation-controller";
-import AppConfig from "ask-cli/lib/model/app-config";
+import SkillSimulationController from "ask-cli/dist/lib/controllers/skill-simulation-controller";
+import AppConfig from "ask-cli/dist/lib/model/app-config";
+import { EndpointRegion } from "ask-cli/dist/lib/clients/smapi-client";
+import "./ASKTypes";
+import * as requests from "./requests";
 import { DirectInvocationResponse, SimulationResponse } from "./responses";
 import { AlexaInvocationResult, AlexaSimulationResult } from "./result";
 
 export * from "./matchers";
 export * from "./responses";
-import * as requests from "./requests";
-import { EndpointRegion } from "ask-cli/lib/clients/smapi-client";
-import { inspect } from "util";
-import "./ASKTypes";
 
 interface AlexaSkillParameters {
   skillId: string;
