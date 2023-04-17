@@ -57,6 +57,12 @@ declare global {
       toHaveDirective(directiveType: string): R;
 
       /**
+       * Verifies that one of the given speech strings is present in the response
+       * @param speech Expected speech output
+       */
+      toHaveSpeech(...speech: Array<string>): R;
+
+      /**
        * Verifies the response contains a request to buy a product.
        */
       toHaveBuyRequest(productId?: string): R;
@@ -74,5 +80,5 @@ expect.extend({
   ...success,
   ...invocation,
   ...responseMatchers,
-  ...directives
+  ...directives,
 });
