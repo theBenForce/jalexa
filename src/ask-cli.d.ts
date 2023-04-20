@@ -5,6 +5,60 @@ declare module "ask-cli/dist/lib/clients/smapi-client" {
   type SkillStage = "live" | "development";
   type EndpointRegion = "DEFAULT" | "NA" | "EU" | "FE";
 
+  interface IspApi {
+    getIsp(ispId: string, stage: string, callback: CallbackFunction): void;
+    getIspSummary(
+      ispId: string,
+      stage: string,
+      callback: CallbackFunction
+    ): void;
+    listIspForSkill(
+      skillId: string,
+      stage: string,
+      queryParams: { maxResults?: number; nextToken?: string },
+      callback: CallbackFunction<
+        any,
+        { inSkillProductSummaryList: Array<InSkillProductSummary> }
+      >
+    ): void;
+    resetIspEntitlement(
+      ispId: string,
+      stage: string,
+      callback: CallbackFunction
+    ): void;
+  }
+
+  interface TestApi {
+      invokeSkill(
+        skillId: string,
+        stage: SkillStage,
+        invokePayload: any,
+        endpointRegion: EndpointRegion,
+        callback: CallbackFunction
+      ): void;
+  }
+  
+  interface EvaluationsApi {
+    callProfileNlu(
+      skillId: string,
+      stage: string,
+      locale: string,
+      utterance: string,
+      multiTurnToken: string,
+      callback: CallbackFunction
+    ): void;
+  }
+
+  export interface ISmapiClient {
+    profile: string;
+    doDebug: boolean;
+    skill: ReturnType<typeof skillApi> & {
+      test: ReturnType<typeof TestApi>;
+      evaluations: ReturnType<typeof EvaluationsApi>;
+    };
+    isp: ReturnType<typeof IspApi>;
+  }
+
   
   export type CallbackFunction<E = any, T = any> = (
     err: { body: E },
@@ -40,46 +94,10 @@ declare module "ask-cli/dist/lib/clients/smapi-client" {
     status: string;
     type: ProductTypes;
   }
-
-  class SmapiClient {
-    isp: {
-      getIsp(ispId: string, stage: string, callback: CallbackFunction): void;
-      getIspSummary(
-        ispId: string,
-        stage: string,
-        callback: CallbackFunction
-      ): void;
-      listIspForSkill(
-        skillId: string,
-        stage: string,
-        queryParams: { maxResults?: number; nextToken?: string },
-        callback: CallbackFunction<
-          any,
-          { inSkillProductSummaryList: Array<InSkillProductSummary> }
-        >
-      ): void;
-      resetIspEntitlement(
-        ispId: string,
-        stage: string,
-        callback: CallbackFunction
-      ): void;
-    };
-    skill: {
-      test: {
-        invokeSkill(
-          skillId: string,
-          stage: SkillStage,
-          invokePayload: any,
-          endpointRegion: EndpointRegion,
-          callback: CallbackFunction
-        ): void;
-      };
-    };
-  }
 }
 
 declare module "ask-cli/dist/lib/controllers/skill-simulation-controller" {
-  import { SmapiClient, SkillStage } from "ask-cli/dist/lib/clients/smapi-client";
+  import { ISmapiClient, SkillStage } from "ask-cli/dist/lib/clients/smapi-client";
 
   import { CallbackFunction } from "ask-cli/dist/lib/clients/smapi-client";
 
@@ -90,26 +108,22 @@ declare module "ask-cli/dist/lib/controllers/skill-simulation-controller" {
     profile: string;
     saveSkillIo?: string;
     debug?: boolean;
+    smapiClient?: ISmapiClient;
   }
 
-  class SkillSimulationController {
+  export class SkillSimulationController {
     constructor(configuration: SkillSimulationControllerParameters);
 
-    smapiClient: SmapiClient;
+    smapiClient: ISmapiClient;
 
     startSkillSimulation<ErrorResponse, SimulationResponse>(
       utterance: string,
-      newSession: boolean,
-      callback: CallbackFunction<ErrorResponse, SimulationResponse>
-    ): void;
+      newSession: boolean
+    ): Promise<{ body: SimulationResponse }>;
     getSkillSimulationResult<ErrorResponse, SimulationResponse>(
-      simulationId: string,
-      callback: CallbackFunction<ErrorResponse, SimulationResponse>
-    ): void;
-    clearSession(): void;
+      simulationId: string
+    ): Promise<{body: SimulationResponse}>;
   }
-
-  export default SkillSimulationController;
 }
 
 

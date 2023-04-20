@@ -1,6 +1,6 @@
 
 
-import SkillSimulationController from "ask-cli/dist/lib/controllers/skill-simulation-controller";
+import {SkillSimulationController} from "ask-cli/dist/lib/controllers/skill-simulation-controller";
 import {InSkillProductSummary} from "ask-cli/dist/lib/clients/smapi-client";
 import AppConfig from "ask-cli/dist/lib/model/app-config";
 import { EndpointRegion } from "ask-cli/dist/lib/clients/smapi-client";
@@ -60,36 +60,22 @@ export class AlexaSkill<T = Record<string, any>> {
     );
   }
 
-  private _startSimulation(
+  private async _startSimulation(
     input: string,
     newConversation: boolean
   ): Promise<SimulationResponse> {
-    return new Promise((resolve, reject) =>
-      this.controller.startSkillSimulation(
-        input,
-        newConversation,
-        (err: unknown, res: { body: SimulationResponse }) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-          this.conversationId = res.body.id;
-          resolve(res.body);
-        }
-      )
-    );
+    const res = await this.controller.startSkillSimulation<ErrorResponse, SimulationResponse>(
+      input,
+      newConversation);
+    
+    this.conversationId = res.body.id;
+    return res.body;
   }
 
-  private _getResponse(conversationId: string): Promise<SimulationResponse> {
-    return new Promise((resolve, reject) =>
-      this.controller.getSkillSimulationResult<ErrorResponse, SimulationResponse>(conversationId, (err, res) => {
-        if (err) {
-          reject(err.body);
-          return;
-        }
-        resolve(res.body);
-      })
-    );
+  private async _getResponse(conversationId: string): Promise<SimulationResponse> {
+    const result = await this.controller.getSkillSimulationResult<ErrorResponse, SimulationResponse>(conversationId);
+
+    return result.body;
   }
 
   async canHandleIntent(props: RequestOptions): Promise<AlexaInvocationResult> {
@@ -100,23 +86,11 @@ export class AlexaSkill<T = Record<string, any>> {
       includeUser: props.includeUser,
     });
 
-    const result = await new Promise<DirectInvocationResponse>(
-      (resolve, reject) =>
-        this.controller.smapiClient.skill.test.invokeSkill(
+    const result = await this.controller.smapiClient.skill.test.invokeSkill(
           this.params.skillId,
           this.params.stage!,
           { body: payload },
-          props.endpointRegion ?? "DEFAULT",
-          (error, res) => {
-            if (error) {
-              reject(error.body);
-              return;
-            }
-
-            resolve(res.body as DirectInvocationResponse);
-          }
-        )
-    );
+          props.endpointRegion ?? "DEFAULT").then((response: any) => response.body);
 
     return new AlexaInvocationResult(result);
   }
@@ -135,21 +109,11 @@ export class AlexaSkill<T = Record<string, any>> {
   }
 
   async resetIspEntitlement(referenceName: string): Promise<void> {
-    const products: Array<InSkillProductSummary> = await new Promise(
-      (resolve, reject) =>
-        this.controller.smapiClient.isp.listIspForSkill(
+    const products: Array<InSkillProductSummary> = await this.controller.smapiClient.isp.listIspForSkill(
           this.params.skillId,
           this.params.stage!,
           {},
-          (err, response) => {
-            if (err) {
-              reject(err.body);
-              return;
-            }
-            resolve(response.body.inSkillProductSummaryList);
-          }
-        )
-    );
+        ).then((response: any) => response.body.inSkillProductSummaryList);
 
     const product = products.find(
       (product) => product.referenceName === referenceName
@@ -159,18 +123,8 @@ export class AlexaSkill<T = Record<string, any>> {
       throw new Error(`Could not find product ${referenceName}`);
     }
 
-    return new Promise((resolve, reject) =>
-      this.controller.smapiClient.isp.resetIspEntitlement(
+    return this.controller.smapiClient.isp.resetIspEntitlement(
         product.productId,
-        this.params.stage!,
-        (err, response) => {
-          if (err) {
-            reject(err.body);
-            return;
-          }
-          resolve();
-        }
-      )
-    );
+        this.params.stage!);
   }
 }
