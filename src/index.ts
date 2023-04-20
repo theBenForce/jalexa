@@ -86,11 +86,23 @@ export class AlexaSkill<T = Record<string, any>> {
       includeUser: props.includeUser,
     });
 
-    const result = await this.controller.smapiClient.skill.test.invokeSkill(
+    const result = await new Promise<DirectInvocationResponse>(
+      (resolve, reject) =>
+        this.controller.smapiClient.skill.test.invokeSkill(
           this.params.skillId,
           this.params.stage!,
           { body: payload },
-          props.endpointRegion ?? "DEFAULT").then((response: any) => response.body);
+          props.endpointRegion ?? "DEFAULT",
+          (error, res) => {
+            if (error) {
+              reject(error.body);
+              return;
+            }
+
+            resolve(res.body as DirectInvocationResponse);
+          }
+        )
+    );
 
     return new AlexaInvocationResult(result);
   }
@@ -109,11 +121,21 @@ export class AlexaSkill<T = Record<string, any>> {
   }
 
   async resetIspEntitlement(referenceName: string): Promise<void> {
-    const products: Array<InSkillProductSummary> = await this.controller.smapiClient.isp.listIspForSkill(
+    const products: Array<InSkillProductSummary> = await new Promise(
+      (resolve, reject) =>
+        this.controller.smapiClient.isp.listIspForSkill(
           this.params.skillId,
           this.params.stage!,
           {},
-        ).then((response: any) => response.body.inSkillProductSummaryList);
+          (err, response) => {
+            if (err) {
+              reject(err.body);
+              return;
+            }
+            resolve(response.body.inSkillProductSummaryList);
+          }
+        )
+    );
 
     const product = products.find(
       (product) => product.referenceName === referenceName
@@ -123,8 +145,18 @@ export class AlexaSkill<T = Record<string, any>> {
       throw new Error(`Could not find product ${referenceName}`);
     }
 
-    return this.controller.smapiClient.isp.resetIspEntitlement(
+    return new Promise((resolve, reject) =>
+      this.controller.smapiClient.isp.resetIspEntitlement(
         product.productId,
-        this.params.stage!);
+        this.params.stage!,
+        (err, response) => {
+          if (err) {
+            reject(err.body);
+            return;
+          }
+          resolve();
+        }
+      )
+    );
   }
 }

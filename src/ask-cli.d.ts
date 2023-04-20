@@ -52,11 +52,11 @@ declare module "ask-cli/dist/lib/clients/smapi-client" {
   export interface ISmapiClient {
     profile: string;
     doDebug: boolean;
-    skill: ReturnType<typeof skillApi> & {
-      test: ReturnType<typeof TestApi>;
-      evaluations: ReturnType<typeof EvaluationsApi>;
+    skill: {
+      test: TestApi;
+      evaluations: EvaluationsApi;
     };
-    isp: ReturnType<typeof IspApi>;
+    isp: IspApi;
   }
 
   
